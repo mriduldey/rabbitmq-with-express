@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendMessage } = require('./services/MQService');
+const { sendMessage, getMessage } = require('./services/MQService');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +14,19 @@ app.post('/', (req, res) => {
     const { message, queue } = req.body;
     sendMessage(queue, message);
     res.status(200).send('Message Sending Successful');
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+app.get('/msg', (req, res) => {
+  try {
+    const queue = 'user-messages';
+    getMessage(queue, (msg) => {
+      console.log('messageeeee::::', msg);
+      res.set('Content-Type', 'application/json');
+      res.send(msg);
+    });
   } catch (err) {
     console.log(err.message);
   }
